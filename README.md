@@ -10,6 +10,8 @@ This project automates the deployment of a production-ready **2-Tier Web Archite
 * **Security:**
   * **Web SG:** Allows HTTP (80) from anywhere.
   * **DB SG:** Allows MySQL (3306) **ONLY** from the Web SG.
+ 
+  * ![Architecture Diagram](./architecture-diagram.png)
 
 ## 🛠️ Tech Stack
 * **Cloud:** AWS (VPC, EC2, RDS, IAM)
