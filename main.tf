@@ -152,3 +152,62 @@ resource "aws_instance" "web_server" {
 output "web_server_public_ip" {
   value = aws_instance.web_server.public_ip
 }
+
+# 11. Create a 2nd PRIVATE Subnet (Required for RDS)
+resource "aws_subnet" "private_subnet_b" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.3.0/24"    # New range
+  availability_zone = "us-east-1b"     # Different AZ (b instead of a)
+
+  tags = {
+    Name = "My-Private-Subnet-B"
+  }
+}
+
+# 12. Create DB Subnet Group
+resource "aws_db_subnet_group" "my_db_group" {
+  name       = "my-db-subnet-group"
+  subnet_ids = [aws_subnet.private_subnet.id, aws_subnet.private_subnet_b.id]
+
+  tags = {
+    Name = "My-DB-Subnet-Group"
+  }
+}
+
+# 13. Create Database Security Group
+resource "aws_security_group" "db_sg" {
+  name        = "allow_mysql"
+  description = "Allow MySQL traffic from Web Server"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description     = "MySQL from Web Layer"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.web_sg.id] # Only the Web SG can enter!
+  }
+
+  tags = {
+    Name = "My-DB-SG"
+  }
+}
+
+# 14. Create the MySQL Database
+resource "aws_db_instance" "my_database" {
+  allocated_storage      = 10
+  db_name                = "mydb"
+  engine                 = "mysql"
+  engine_version         = "8.0"
+  instance_class         = "db.t3.micro"
+  username               = "admin"
+  password               = var.db_password  # Using the variable here
+  parameter_group_name   = "default.mysql8.0"
+  skip_final_snapshot    = true          # vital for learning/destroying easily
+  db_subnet_group_name   = aws_db_subnet_group.my_db_group.name
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
+
+  tags = {
+    Name = "My-Terraform-DB"
+  }
+}
