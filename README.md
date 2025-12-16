@@ -1,64 +1,42 @@
 # AWS Multi-Tier Infrastructure with Terraform
 
 ## 📖 Project Overview
-
-This project automates the deployment of a scalable, multi-tier web application architecture on AWS using **Terraform**. It demonstrates Infrastructure as Code (IaC) best practices, including modular VPC networking, security groups, and automated EC2 provisioning.
+This project automates the deployment of a production-ready **2-Tier Web Architecture** on AWS using Terraform. It features a public-facing web server and a secure, isolated database backend.
 
 ## 🏗️ Architecture
-
-The infrastructure includes:
-* **VPC:** Custom Virtual Private Cloud for network isolation.
-* **Public Subnet:** Hosts the web server (accessible via Internet Gateway).
-* **Private Subnet:** Prepared for backend/database resources (secure isolation).
-* **Security Groups:** Strictly scoped firewall rules (HTTP/80).
-* **EC2 Automation:** Auto-provisioning of Amazon Linux 2023 with Apache Web Server.
+* **VPC:** Custom Network with public and private subnets across **2 Availability Zones**.
+* **Public Tier:** EC2 Web Server (Amazon Linux 2023) with Auto-assigned Public IP.
+* **Private Tier:** RDS MySQL Database (isolated from the internet).
+* **Security:**
+  * **Web SG:** Allows HTTP (80) from anywhere.
+  * **DB SG:** Allows MySQL (3306) **ONLY** from the Web SG.
 
 ## 🛠️ Tech Stack
-
-* **Cloud Provider:** AWS (Amazon Web Services)
-* **IaC Tool:** Terraform
-* **Scripting:** Bash (User Data for server configuration)
+* **Cloud:** AWS (VPC, EC2, RDS, IAM)
+* **IaC:** Terraform (Modular & Variable-driven)
+* **Database:** MySQL 8.0
 
 ## 🚀 How to Run
 
-### Prerequisites
-
-* Terraform installed
-* AWS CLI configured with credentials
-
-### Deployment Steps
-
-1. **Clone the repository:**
-
+1.  **Clone the repo:**
     ```bash
-    git clone [https://github.com/YOUR_USERNAME/aws-terraform-multi-tier-app.git](https://github.com/YOUR_USERNAME/aws-terraform-multi-tier-app.git)
-    cd aws-terraform-multi-tier-app
+    git clone https://github.com/YOUR_USERNAME/aws-terraform-multi-tier-app.git
     ```
 
-2. **Initialize Terraform:**
+2.  **Create secrets file:**
+    Create a `terraform.tfvars` file (this is git-ignored for security):
+    ```hcl
+    db_password = "your-secure-password"
+    ```
 
+3.  **Deploy:**
     ```bash
     terraform init
-    ```
-
-3. **Plan the deployment:**
-
-    ```bash
-    terraform plan
-    ```
-
-4. **Apply changes:**
-
-    ```bash
     terraform apply --auto-approve
     ```
 
-5. **Access the Application:**
-
-    Terraform will output the `web_server_public_ip`. Open this IP in your browser to verify the deployment.
-
 ## 🧹 Cleanup
-
-To avoid AWS charges, destroy the resources when finished:
+To destroy all resources and stop billing:
 ```bash
 terraform destroy
+```
