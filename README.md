@@ -24,7 +24,7 @@ This project automates the deployment of a production-ready **2-Tier Web Archite
 
 1.  **Clone the repo:**
     ```bash
-    git clone https://github.com/YOUR_USERNAME/aws-terraform-multi-tier-app.git
+    git clone https://github.com/Nikkypwetti/aws-terraform-multi-tier-app.git
     ```
 
 2.  **Create secrets file:**
